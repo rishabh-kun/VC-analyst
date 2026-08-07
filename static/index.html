@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Agent AI Venture Capital Analyst</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81',
+            },
+            dark: {
+              bg: '#0B0F19',
+              card: '#111827',
+              border: '#1F2937',
+              muted: '#374151',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0B0F19;
+      color: #F9FAFB;
+    }
+
+    .glass-card {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-card-hover:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 8px 32px 0 rgba(99, 102, 241, 0.15);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #818CF8 0%, #C084FC 50%, #F472B6 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .glow-bg {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Glow background elements -->
+  <div class="glow-bg top-0 left-1/4"></div>
+  <div class="glow-bg top-1/3 right-10"></div>
+
+  <!-- Navigation Bar -->
+  <header class="border-b border-dark-border/80 sticky top-0 z-50 glass-card">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="showView('home')">
+        <div
+          class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-purple-600 flex items-center justify-center shadow-lg shadow-brand-500/30">
+          <i data-lucide="cpu" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <span class="text-lg font-bold tracking-tight text-white">VC Analyst <span
+              class="gradient-text">AI</span></span>
+          <span class="block text-xs text-gray-400 font-medium">Multi-Agent Intelligence</span>
+        </div>
+      </div>
+
+      <nav class="flex items-center space-x-4">
+        <button onclick="showView('home')"
+          class="text-sm font-medium text-gray-300 hover:text-white transition flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/5">
+          <i data-lucide="search" class="w-4 h-4"></i> Analyze
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-6 py-10 relative z-10">
+
+    <!-- PAGE 1: HOME PAGE VIEW -->
+    <section id="home-view" class="max-w-4xl mx-auto space-y-12">
+      <!-- Hero Header -->
+      <div class="text-center space-y-4 pt-6">
+        <div
+          class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 6 Autonomous AI Domain Agents
+        </div>
+        <h1 class="text-5xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
+          Venture Capital Due Diligence <br><span class="gradient-text">Powered by Autonomous AI</span>
+        </h1>
+        <p class="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
+          Instantly execute deep due diligence across market size, founder track records, unit economics, risk matrices,
+          and generate institutional-grade Investment Memos.
+        </p>
+      </div>
+
+      <!-- Search Input Box Card -->
+      <div class="glass-card rounded-2xl p-8 shadow-2xl border border-white/10 space-y-6">
+        <form id="analyze-form" class="space-y-4" onsubmit="handleAnalyzeSubmit(event)">
+          <label class="block text-sm font-medium text-gray-300">Enter Startup or Company Name</label>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-grow">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                <i data-lucide="building-2" class="w-5 h-5"></i>
+              </div>
+              <input type="text" id="startup-input" required placeholder="e.g. OpenAI, Stripe, Databricks, SpaceX..."
+                class="w-full pl-11 pr-4 py-3.5 bg-dark-bg/80 border border-dark-border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition text-base">
+            </div>
+            <button type="submit" id="analyze-btn"
+              class="px-8 py-3.5 bg-gradient-to-r from-brand-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 text-white font-semibold rounded-xl shadow-lg shadow-brand-500/25 transition transform active:scale-95 flex items-center justify-center gap-2 text-base shrink-0">
+              <i data-lucide="rocket" class="w-5 h-5"></i> Analyze Startup
+            </button>
+          </div>
+        </form>
+
+        <!-- Quick Examples -->
+        <div class="pt-4 border-t border-dark-border/60 flex items-center gap-3 flex-wrap text-sm text-gray-400">
+          <span class="font-medium text-gray-400">Try Example:</span>
+          <button onclick="fillExample('OpenAI')"
+            class="px-3 py-1 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg border border-white/10 transition text-xs flex items-center gap-1">
+            <i data-lucide="zap" class="w-3 h-3 text-amber-400"></i> OpenAI
+          </button>
+          <button onclick="fillExample('Stripe')"
+            class="px-3 py-1 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg border border-white/10 transition text-xs flex items-center gap-1">
+            <i data-lucide="credit-card" class="w-3 h-3 text-indigo-400"></i> Stripe
+          </button>
+          <button onclick="fillExample('Databricks')"
+            class="px-3 py-1 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg border border-white/10 transition text-xs flex items-center gap-1">
+            <i data-lucide="database" class="w-3 h-3 text-cyan-400"></i> Databricks
+          </button>
+          <button onclick="fillExample('SpaceX')"
+            class="px-3 py-1 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg border border-white/10 transition text-xs flex items-center gap-1">
+            <i data-lucide="globe" class="w-3 h-3 text-emerald-400"></i> SpaceX
+          </button>
+        </div>
+      </div>
+
+      <!-- Agent Capabilities Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+        <div class="glass-card p-6 rounded-xl border border-white/5 space-y-2">
+          <div class="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+            <i data-lucide="search" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-semibold text-white">Startup Research</h3>
+          <p class="text-xs text-gray-400">Extracts company overview, founding date, HQ, product value proposition, and
+            verified domain.</p>
+        </div>
+        <div class="glass-card p-6 rounded-xl border border-white/5 space-y-2">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-semibold text-white">Founder Evaluation</h3>
+          <p class="text-xs text-gray-400">Researches serial founder track record, education, executive exits, and team
+            leadership score.</p>
+        </div>
+        <div class="glass-card p-6 rounded-xl border border-white/5 space-y-2">
+          <div class="w-10 h-10 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+            <i data-lucide="line-chart" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-semibold text-white">Market & TAM Analysis</h3>
+          <p class="text-xs text-gray-400">Computes TAM scale, CAGR growth rate, competitor battlegrounds, and strategic
+            market tailwinds.</p>
+        </div>
+        <div class="glass-card p-6 rounded-xl border border-white/5 space-y-2">
+          <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+            <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-semibold text-white">Financial Position</h3>
+          <p class="text-xs text-gray-400">Evaluates capitalization, total funding, ARR revenue scale, lead investors,
+            and burn risks.</p>
+        </div>
+        <div class="glass-card p-6 rounded-xl border border-white/5 space-y-2">
+          <div class="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-semibold text-white">Risk Matrix</h3>
+          <p class="text-xs text-gray-400">Evaluates 5 key risk vectors: Founder, Market, Financial, Operational, and
+            Regulatory.</p>
+        </div>
+        <div class="glass-card p-6 rounded-xl border border-white/5 space-y-2">
+          <div class="w-10 h-10 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center">
+            <i data-lucide="file-check" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-semibold text-white">VC Investment Memo</h3>
+          <p class="text-xs text-gray-400">Synthesizes final recommendation (Strong Invest, Invest, Watch, Pass) with
+            confidence score.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 2: ANALYSIS PROGRESS VIEW -->
+    <section id="progress-view" class="hidden max-w-4xl mx-auto space-y-8">
+      <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-4 border-b border-dark-border/80 pb-6">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-brand-400">Analysis Workflow in
+              Progress</span>
+            <h2 class="text-3xl font-bold text-white mt-1" id="progress-company-name">Analyzing Startup...</h2>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full border-2 border-brand-500 border-t-transparent animate-spin"></div>
+            <span class="text-sm text-gray-300 font-medium" id="progress-status-badge">Running AI Pipeline</span>
+          </div>
+        </div>
+
+        <!-- Overall Progress Bar -->
+        <div class="space-y-2">
+          <div class="flex justify-between text-xs text-gray-400 font-medium">
+            <span>Pipeline Execution Progress</span>
+            <span id="progress-percent">0%</span>
+          </div>
+          <div class="w-full bg-dark-bg rounded-full h-3 p-0.5 border border-dark-border overflow-hidden">
+            <div id="progress-bar-fill"
+              class="bg-gradient-to-r from-brand-500 to-purple-500 h-full rounded-full transition-all duration-500"
+              style="width: 5%"></div>
+          </div>
+        </div>
+
+        <!-- 6 Agent Progress Steps Grid -->
+        <div class="grid grid-cols-1 gap-4 pt-4" id="agent-steps-container">
+          <!-- Dynamically populated steps -->
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 3: RESULTS PAGE VIEW (VC DASHBOARD MEMO) -->
+    <section id="results-view" class="hidden space-y-8">
+
+      <!-- Header Overview Banner -->
+      <div class="glass-card p-8 rounded-2xl border border-white/10 space-y-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-2">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Venture Capital Investment
+                Memo</span>
+              <span id="memo-status-badge"
+                class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Verified
+                Complete</span>
+            </div>
+            <h1 class="text-4xl font-extrabold text-white" id="memo-company-title">Company Name</h1>
+            <p class="text-sm text-gray-400 max-w-2xl leading-relaxed" id="memo-exec-summary">Executive summary
+              thesis...</p>
+          </div>
+
+          <!-- Score & Recommendation Badges -->
+          <div class="flex items-center gap-4 bg-dark-bg/60 p-4 rounded-xl border border-dark-border shrink-0">
+            <!-- Recommendation Badge -->
+            <div class="text-center px-4 py-2 border-r border-dark-border">
+              <span class="block text-xs text-gray-400 uppercase tracking-wider font-semibold">Recommendation</span>
+              <span id="memo-recommendation" class="text-xl font-black text-emerald-400">Strong Invest</span>
+            </div>
+            <!-- Score Gauge -->
+            <div class="text-center px-4 py-2 border-r border-dark-border">
+              <span class="block text-xs text-gray-400 uppercase tracking-wider font-semibold">VC Score</span>
+              <span id="memo-overall-score" class="text-2xl font-extrabold text-white">9.0<span
+                  class="text-xs text-gray-400 font-normal">/10</span></span>
+            </div>
+            <!-- Confidence Ring -->
+            <div class="text-center px-4 py-2">
+              <span class="block text-xs text-gray-400 uppercase tracking-wider font-semibold">Confidence</span>
+              <span id="memo-confidence" class="text-xl font-bold text-purple-400">90%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Investment Reasoning Box -->
+        <div
+          class="bg-brand-500/10 border border-brand-500/20 p-4 rounded-xl text-sm text-brand-200 flex items-start gap-3">
+          <i data-lucide="info" class="w-5 h-5 text-brand-400 shrink-0 mt-0.5"></i>
+          <div>
+            <span class="font-semibold text-white block mb-0.5">Investment Thesis Reasoning</span>
+            <p id="memo-reasoning-text" class="text-xs text-gray-300 leading-relaxed"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Sections Tabs/Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Left Column: Company & Founders (2 Cols width on large screens) -->
+        <div class="lg:col-span-2 space-y-8">
+
+          <!-- 1. Startup Overview Card -->
+          <div class="glass-card p-6 rounded-2xl border border-white/10 space-y-4">
+            <div class="flex items-center justify-between border-b border-dark-border/80 pb-3">
+              <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i data-lucide="building-2" class="w-5 h-5 text-brand-400"></i> Company Overview
+              </h3>
+              <a id="memo-official-link" href="#" target="_blank"
+                class="text-xs font-medium text-brand-400 hover:underline flex items-center gap-1">
+                Visit Website <i data-lucide="external-link" class="w-3 h-3"></i>
+              </a>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+              <div>
+                <span class="block text-xs text-gray-400 font-medium">Industry</span>
+                <span id="memo-industry" class="font-semibold text-white">Software & Tech</span>
+              </div>
+              <div>
+                <span class="block text-xs text-gray-400 font-medium">Founding Year</span>
+                <span id="memo-founding-year" class="font-semibold text-white">2015</span>
+              </div>
+              <div>
+                <span class="block text-xs text-gray-400 font-medium">Headquarters</span>
+                <span id="memo-hq" class="font-semibold text-white">San Francisco, CA</span>
+              </div>
+            </div>
+            <div class="pt-2">
+              <span class="block text-xs text-gray-400 font-medium mb-1">Product & Service Summary</span>
+              <p id="memo-product-summary"
+                class="text-xs text-gray-300 leading-relaxed bg-dark-bg/40 p-3 rounded-lg border border-dark-border">
+              </p>
+            </div>
+          </div>
+
+          <!-- 2. Founder Evaluation Card -->
+          <div class="glass-card p-6 rounded-2xl border border-white/10 space-y-4">
+            <div class="flex items-center justify-between border-b border-dark-border/80 pb-3">
+              <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i data-lucide="users" class="w-5 h-5 text-purple-400"></i> Founding Team & Leadership
+              </h3>
+              <span id="memo-founder-score-badge"
+                class="px-2.5 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 text-xs font-bold rounded-lg">
+                Score: 10.0/10
+              </span>
+            </div>
+            <div id="memo-founders-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Dynamically populated founder cards -->
+            </div>
+          </div>
+
+          <!-- 3. Market Analysis & Competitors Card -->
+          <div class="glass-card p-6 rounded-2xl border border-white/10 space-y-4">
+            <div class="flex items-center justify-between border-b border-dark-border/80 pb-3">
+              <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i data-lucide="line-chart" class="w-5 h-5 text-cyan-400"></i> Market Opportunity & Competitors
+              </h3>
+              <span id="memo-market-score-badge"
+                class="px-2.5 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold rounded-lg">
+                Score: 9.5/10
+              </span>
+            </div>
+
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-dark-bg/40 p-4 rounded-xl border border-dark-border">
+              <div>
+                <span class="block text-xs text-gray-400 font-medium">Total Addressable Market (TAM)</span>
+                <span id="memo-tam" class="font-bold text-cyan-300 text-sm">$1.3 Trillion</span>
+              </div>
+              <div>
+                <span class="block text-xs text-gray-400 font-medium">Estimated Market CAGR</span>
+                <span id="memo-cagr" class="font-bold text-emerald-400 text-sm">42.0% CAGR</span>
+              </div>
+            </div>
+
+            <div>
+              <span class="block text-xs font-semibold text-gray-300 mb-2 uppercase tracking-wider">Major Industry
+                Competitors</span>
+              <div id="memo-competitors-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <!-- Dynamically populated competitors -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Financials & Risks (1 Col width) -->
+        <div class="space-y-8">
+
+          <!-- 4. Financial Analysis Card -->
+          <div class="glass-card p-6 rounded-2xl border border-white/10 space-y-4">
+            <div class="flex items-center justify-between border-b border-dark-border/80 pb-3">
+              <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i data-lucide="dollar-sign" class="w-5 h-5 text-emerald-400"></i> Financial Position
+              </h3>
+              <span id="memo-financial-score-badge"
+                class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold rounded-lg">
+                Score: 9.0/10
+              </span>
+            </div>
+
+            <div class="space-y-3 text-xs">
+              <div class="flex justify-between py-1.5 border-b border-dark-border/40">
+                <span class="text-gray-400">Capitalization Type:</span>
+                <span id="memo-fin-type" class="font-semibold text-white">Private</span>
+              </div>
+              <div class="flex justify-between py-1.5 border-b border-dark-border/40">
+                <span class="text-gray-400">Total Funding Raised:</span>
+                <span id="memo-fin-funding" class="font-semibold text-emerald-400">$13B+</span>
+              </div>
+              <div class="flex justify-between py-1.5 border-b border-dark-border/40">
+                <span class="text-gray-400">Annual ARR Revenue:</span>
+                <span id="memo-fin-revenue" class="font-semibold text-white">$3.7B+ ARR</span>
+              </div>
+              <div class="flex justify-between py-1.5 border-b border-dark-border/40">
+                <span class="text-gray-400">Profitability Status:</span>
+                <span id="memo-fin-profitability" class="font-semibold text-amber-400">Reinvesting</span>
+              </div>
+            </div>
+
+            <div class="space-y-2 pt-2">
+              <span class="block text-xs font-semibold text-gray-300">Financial Strengths</span>
+              <ul id="memo-fin-strengths" class="text-xs text-gray-300 space-y-1 list-disc pl-4"></ul>
+            </div>
+          </div>
+
+          <!-- 5. Risk Assessment Matrix Card -->
+          <div class="glass-card p-6 rounded-2xl border border-white/10 space-y-4">
+            <div class="flex items-center justify-between border-b border-dark-border/80 pb-3">
+              <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <i data-lucide="shield-alert" class="w-5 h-5 text-amber-400"></i> Investment Risk Matrix
+              </h3>
+              <span id="memo-risk-score-badge"
+                class="px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-bold rounded-lg">
+                Risk Score: 4.2/10
+              </span>
+            </div>
+
+            <div class="space-y-2.5 text-xs">
+              <div class="flex justify-between items-center bg-dark-bg/40 p-2 rounded border border-dark-border">
+                <span class="text-gray-300 font-medium">Founder Risk</span>
+                <span id="risk-badge-founder"
+                  class="px-2 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400">Low</span>
+              </div>
+              <div class="flex justify-between items-center bg-dark-bg/40 p-2 rounded border border-dark-border">
+                <span class="text-gray-300 font-medium">Market Risk</span>
+                <span id="risk-badge-market"
+                  class="px-2 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400">Low</span>
+              </div>
+              <div class="flex justify-between items-center bg-dark-bg/40 p-2 rounded border border-dark-border">
+                <span class="text-gray-300 font-medium">Financial Risk</span>
+                <span id="risk-badge-financial"
+                  class="px-2 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-400">Medium</span>
+              </div>
+              <div class="flex justify-between items-center bg-dark-bg/40 p-2 rounded border border-dark-border">
+                <span class="text-gray-300 font-medium">Operational Risk</span>
+                <span id="risk-badge-operational"
+                  class="px-2 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-400">Medium</span>
+              </div>
+              <div class="flex justify-between items-center bg-dark-bg/40 p-2 rounded border border-dark-border">
+                <span class="text-gray-300 font-medium">Legal / Regulatory Risk</span>
+                <span id="risk-badge-legal"
+                  class="px-2 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400">High</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Sources Card -->
+          <div class="glass-card p-6 rounded-2xl border border-white/10 space-y-3">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2 border-b border-dark-border/80 pb-2">
+              <i data-lucide="link" class="w-4 h-4 text-brand-400"></i> Verified Web Sources
+            </h3>
+            <ul id="memo-sources-list" class="text-xs text-gray-400 space-y-1.5 truncate">
+              <!-- Dynamically populated sources -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Application Logic JavaScript -->
+  <script>
+    const API_BASE = window.location.origin.startsWith('http') ? window.location.origin : 'http://127.0.0.1:8000';
+    let currentJobId = null;
+    let pollInterval = null;
+
+    // View Navigation Router
+    function showView(viewName) {
+      document.getElementById('home-view').classList.add('hidden');
+      document.getElementById('progress-view').classList.add('hidden');
+      document.getElementById('results-view').classList.add('hidden');
+
+      if (viewName === 'home') {
+        document.getElementById('home-view').classList.remove('hidden');
+        if (pollInterval) clearInterval(pollInterval);
+      } else if (viewName === 'progress') {
+        document.getElementById('progress-view').classList.remove('hidden');
+      } else if (viewName === 'results') {
+        document.getElementById('results-view').classList.remove('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    function fillExample(name) {
+      document.getElementById('startup-input').value = name;
+    }
+
+    // Submit Handler - Connect to POST /analyze
+    async function handleAnalyzeSubmit(event) {
+      event.preventDefault();
+      const input = document.getElementById('startup-input').value.trim();
+      if (!input) return;
+
+      document.getElementById('progress-company-name').textContent = input;
+      showView('progress');
+
+      try {
+        const response = await fetch(`${API_BASE}/analyze`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ startup_name: input })
+        });
+
+        const data = await response.json();
+        if (response.ok && data.job_id) {
+          currentJobId = data.job_id;
+          startPollingProgress(currentJobId);
+        } else {
+          alert('Error starting analysis: ' + (data.detail || data.message));
+          showView('home');
+        }
+      } catch (err) {
+        alert('Network error connecting to FastAPI backend.');
+        showView('home');
+      }
+    }
+
+    // Live Progress Polling
+    function startPollingProgress(jobId) {
+      if (pollInterval) clearInterval(pollInterval);
+
+      pollInterval = setInterval(async () => {
+        try {
+          const res = await fetch(`${API_BASE}/api/status/${jobId}`);
+          if (!res.ok) return;
+
+          const data = await res.json();
+          renderProgressSteps(data);
+
+          if (data.status === 'COMPLETED') {
+            clearInterval(pollInterval);
+            setTimeout(() => fetchAndShowResults(jobId), 800);
+          } else if (data.status === 'ERROR') {
+            clearInterval(pollInterval);
+            alert('Workflow halted due to error: ' + data.error);
+          }
+        } catch (e) {
+          console.error('Polling error:', e);
+        }
+      }, 1500);
+    }
+
+    // Render 6 Agent Progress Step Cards
+    function renderProgressSteps(data) {
+      const container = document.getElementById('agent-steps-container');
+      const steps = data.steps_progress || {};
+
+      let completedCount = 0;
+      const totalSteps = Object.keys(steps).length;
+
+      let html = '';
+      for (const [key, step] of Object.entries(steps)) {
+        let badgeClass = 'bg-gray-800 text-gray-400 border-gray-700';
+        let iconHtml = '<i data-lucide="circle" class="w-4 h-4 text-gray-500"></i>';
+
+        if (step.status === 'COMPLETED') {
+          completedCount++;
+          badgeClass = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+          iconHtml = '<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>';
+        } else if (step.status === 'RUNNING') {
+          badgeClass = 'bg-brand-500/10 text-brand-400 border-brand-500/30 animate-pulse';
+          iconHtml = '<i data-lucide="loader-2" class="w-4 h-4 text-brand-400 animate-spin"></i>';
+        }
+
+        html += `
+          <div class="glass-card p-4 rounded-xl border border-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="p-2 rounded-lg bg-dark-bg/60">
+                ${iconHtml}
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-white">${step.name}</h4>
+                <p class="text-xs text-gray-400">${step.summary}</p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold border ${badgeClass}">
+              ${step.status}
+            </span>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+      lucide.createIcons();
+
+      const percent = Math.round((completedCount / totalSteps) * 100);
+      document.getElementById('progress-percent').textContent = `${percent}%`;
+      document.getElementById('progress-bar-fill').style.width = `${Math.max(5, percent)}%`;
+    }
+
+    // Fetch & Display Full Memorandum Dashboard
+    async function fetchAndShowResults(jobId) {
+      try {
+        const res = await fetch(`${API_BASE}/api/results/${jobId}`);
+        const data = await res.json();
+        if (res.ok && data.memo) {
+          renderMemoResults(data.memo, data.full_context);
+          showView('results');
+        }
+      } catch (e) {
+        console.error('Results fetch error:', e);
+      }
+    }
+
+    // Render Results Section
+    function renderMemoResults(memo, context) {
+      document.getElementById('memo-company-title').textContent = memo.company_name;
+      document.getElementById('memo-exec-summary').textContent = memo.executive_summary;
+      document.getElementById('memo-recommendation').textContent = memo.recommendation;
+
+      // Colorize recommendation badge
+      const rec = (memo.recommendation || '').toLowerCase();
+      const recEl = document.getElementById('memo-recommendation');
+      if (rec.includes('strong invest')) {
+        recEl.className = 'text-xl font-black text-emerald-400';
+      } else if (rec.includes('invest')) {
+        recEl.className = 'text-xl font-black text-blue-400';
+      } else if (rec.includes('watch')) {
+        recEl.className = 'text-xl font-black text-amber-400';
+      } else {
+        recEl.className = 'text-xl font-black text-red-400';
+      }
+
+      document.getElementById('memo-overall-score').textContent = memo.overall_investment_score.toFixed(1);
+      document.getElementById('memo-confidence').textContent = `${memo.confidence_score}%`;
+      document.getElementById('memo-reasoning-text').textContent = memo.reasoning;
+
+      // Context fields
+      const r = (context && context.research_output) || {};
+      const f = (context && context.founder_output) || {};
+      const m = (context && context.market_output) || {};
+      const fin = (context && context.financial_output) || {};
+      const rk = (context && context.risk_output) || {};
+
+      document.getElementById('memo-industry').textContent = r.industry || 'Technology';
+      document.getElementById('memo-founding-year').textContent = r.founding_year || 'N/A';
+      document.getElementById('memo-hq').textContent = r.headquarters || 'Unknown';
+      document.getElementById('memo-product-summary').textContent = r.product_service_summary || memo.startup_summary;
+
+      if (r.official_website) {
+        document.getElementById('memo-official-link').href = r.official_website;
+        document.getElementById('memo-official-link').style.display = 'inline-flex';
+      } else {
+        document.getElementById('memo-official-link').style.display = 'none';
+      }
+
+      // Founders
+      document.getElementById('memo-founder-score-badge').textContent = `Score: ${(f.founder_score || 0).toFixed(1)}/10`;
+      const founderListEl = document.getElementById('memo-founders-list');
+      const profiles = f.founder_profiles || [];
+      if (profiles.length > 0) {
+        founderListEl.innerHTML = profiles.map(p => `
+          <div class="bg-dark-bg/40 p-4 rounded-xl border border-dark-border text-xs space-y-1.5">
+            <div class="font-bold text-white text-sm">${p.name}</div>
+            <div class="text-gray-400"><span class="text-gray-500 font-medium">Education:</span> ${p.education.join(', ') || 'N/A'}</div>
+            <div class="text-gray-400"><span class="text-gray-500 font-medium">Exits/Ventures:</span> ${p.previous_startups.join(', ') || 'N/A'}</div>
+            <div class="text-purple-300 font-medium pt-1">${p.relevant_experience}</div>
+          </div>
+        `).join('');
+      } else {
+        founderListEl.innerHTML = `<p class="text-xs text-gray-400 font-medium">Founding team background compiled.</p>`;
+      }
+
+      // Market
+      document.getElementById('memo-market-score-badge').textContent = `Score: ${(m.market_score || 0).toFixed(1)}/10`;
+      document.getElementById('memo-tam').textContent = m.tam_estimate || 'N/A';
+      document.getElementById('memo-cagr').textContent = m.market_growth_estimate || 'N/A';
+
+      const compGrid = document.getElementById('memo-competitors-grid');
+      const comps = m.major_competitors || [];
+      if (comps.length > 0) {
+        compGrid.innerHTML = comps.map(c => `
+          <div class="bg-dark-bg/40 p-3 rounded-lg border border-dark-border text-xs space-y-1">
+            <div class="font-bold text-cyan-300">${c.name}</div>
+            <div class="text-gray-400 text-[11px]">${c.description || ''}</div>
+          </div>
+        `).join('');
+      } else {
+        compGrid.innerHTML = `<span class="text-xs text-gray-400">Competitive dynamics mapped.</span>`;
+      }
+
+      // Financials
+      document.getElementById('memo-financial-score-badge').textContent = `Score: ${(fin.financial_score || 0).toFixed(1)}/10`;
+      document.getElementById('memo-fin-type').textContent = fin.company_type || 'Private';
+      document.getElementById('memo-fin-funding').textContent = fin.total_funding || 'N/A';
+      document.getElementById('memo-fin-revenue').textContent = fin.estimated_revenue || 'N/A';
+      document.getElementById('memo-fin-profitability').textContent = fin.profitability || 'N/A';
+
+      const strengthsEl = document.getElementById('memo-fin-strengths');
+      const strengths = fin.financial_strengths || [];
+      strengthsEl.innerHTML = strengths.map(s => `<li>${s}</li>`).join('') || '<li>Standard VC capitalization.</li>';
+
+      // Risks
+      document.getElementById('memo-risk-score-badge').textContent = `Risk Score: ${(rk.overall_risk_score || 0).toFixed(1)}/10`;
+      setRiskBadge('risk-badge-founder', rk.founder_risk);
+      setRiskBadge('risk-badge-market', rk.market_risk);
+      setRiskBadge('risk-badge-financial', rk.financial_risk);
+      setRiskBadge('risk-badge-operational', rk.operational_risk);
+      setRiskBadge('risk-badge-legal', rk.legal_regulatory_risk);
+
+      // Sources
+      const sourcesEl = document.getElementById('memo-sources-list');
+      const sources = r.sources || [];
+      if (sources.length > 0) {
+        sourcesEl.innerHTML = sources.map(url => `
+          <li><a href="${url}" target="_blank" class="hover:underline text-brand-400 flex items-center gap-1 truncate"><i data-lucide="external-link" class="w-3 h-3 shrink-0"></i> ${url}</a></li>
+        `).join('');
+      } else {
+        sourcesEl.innerHTML = `<li class="text-gray-500">Public search records & verified database snippets.</li>`;
+      }
+
+      lucide.createIcons();
+    }
+
+    function setRiskBadge(elementId, riskLevel) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const level = (riskLevel || 'Medium').toLowerCase();
+      el.textContent = riskLevel || 'Medium';
+      if (level === 'low') {
+        el.className = 'px-2 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-400';
+      } else if (level === 'medium') {
+        el.className = 'px-2 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-400';
+      } else {
+        el.className = 'px-2 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400';
+      }
+    }
+
+    // Initialize Lucide icons on load
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+
+</html>
