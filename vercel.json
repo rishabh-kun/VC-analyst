@@ -1,0 +1,31 @@
+{
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "static",
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/static/assets/:path*",
+      "destination": "/assets/:path*"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://vc-analyst-backend.onrender.com/api/:path*"
+    },
+    {
+      "source": "/analyze",
+      "destination": "https://vc-analyst-backend.onrender.com/analyze"
+    },
+    {
+      "source": "/status/:path*",
+      "destination": "https://vc-analyst-backend.onrender.com/status/:path*"
+    },
+    {
+      "source": "/results/:path*",
+      "destination": "https://vc-analyst-backend.onrender.com/results/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ and return structured outputs.
 import json
 import os
 import re
+import time
 from typing import Any, Dict, Optional
 from utils.logger import get_logger
 
@@ -82,24 +83,38 @@ class LLMTool:
         Returns:
             str: Response string from LLM provider.
         """
-        # 1. Try Gemini GenAI Client
+        # 1. Try Gemini GenAI Client with model fallback on 429/503/transient errors
         if self._genai_client:
-            try:
-                from google.genai import types
-                logger.info(f"Executing Gemini LLM request with model '{self.model_name}'...")
-                response = self._genai_client.models.generate_content(
-                    model=self.model_name,
-                    contents=user_prompt,
-                    config=types.GenerateContentConfig(
-                        system_instruction=system_prompt,
-                        temperature=0.1,
-                        response_mime_type="application/json",
-                    ),
-                )
-                if response and response.text:
-                    return response.text
-            except Exception as err:
-                logger.error(f"Gemini API call failed: {err}")
+            from google.genai import types
+            models_to_try = [self.model_name]
+            for alt in ["gemini-2.5-flash", "gemini-3.7-flash", "gemini-2.5-flash-lite"]:
+                if alt not in models_to_try:
+                    models_to_try.append(alt)
+
+            for m in models_to_try:
+                try:
+                    logger.info(f"Executing Gemini LLM request with model '{m}'...")
+                    response = self._genai_client.models.generate_content(
+                        model=m,
+                        contents=user_prompt,
+                        config=types.GenerateContentConfig(
+                            system_instruction=system_prompt,
+                            temperature=0.1,
+                            response_mime_type="application/json",
+                        ),
+                    )
+                    if response and response.text:
+                        return response.text
+                except Exception as err:
+                    err_str = str(err)
+                    transient_indicators = ["429", "RESOURCE_EXHAUSTED", "503", "UNAVAILABLE", "500", "high demand"]
+                    if any(ind in err_str for ind in transient_indicators):
+                        logger.warning(f"Transient issue ({err}) for model '{m}'. Falling back to alternative model...")
+                        time.sleep(1.0)
+                        continue
+                    else:
+                        logger.error(f"Gemini API call failed for '{m}': {err}")
+                        break
 
         # 2. Fallback to OpenAI API if OPENAI_API_KEY is present
         openai_key = os.getenv("OPENAI_API_KEY")
